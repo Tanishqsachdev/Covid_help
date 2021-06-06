@@ -15,7 +15,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
+from core.views import *
+from django.contrib.auth import views as auth_views
+
+admin.site.site_header = "Admin"
+admin.site.site_title = "Admin Portal"
+admin.site.index_title = "Welcome to Admin Portal"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login', UserLogin.as_view(),name='user_login'),
+    path('', Home.as_view(),name='home'),
+    path('logout', UserLogout.as_view(),name='user_logout'),
+    path('register', UserSignup.as_view(),name='user_signup'),
+    path('password_reset', auth_views.PasswordResetView.as_view(template_name='registration/forgot.html'),name='password_reset'),
+    path('password_reset/done', auth_views.PasswordResetDoneView.as_view(template_name='registration/password_reset_done.html'),name='password_reset_done'),
+    path('password_reset/<uidb64>/<token>', auth_views.PasswordResetConfirmView.as_view(template_name = 'registration/reset.html'),name='password_reset_confirm'),
+    path('password_reset/complete', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),name='password_reset_complete'),
 ]
+
+urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
